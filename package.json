@@ -1,0 +1,17 @@
+{
+	"name": "gmfetch",
+	"version": "1.0.0",
+	"description": "fetch-like wrapper for GM_xmlhttpRequest.",
+	"main": "gmfetch.js",
+	"broser": "gmfetch.min.js",
+	"keywords": [],
+	"scripts": {
+		"min": "minify gmfetch.js -o gmfetch.min.js",
+		"prepare": "npm run min"
+	},
+	"devDependencies": {
+		"babel-minify": "^0.4.3"
+	},
+	"author": "maple3142",
+	"license": "MIT"
+}
