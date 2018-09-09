@@ -2,11 +2,11 @@
 	"name": "gmxhr-fetch",
 	"version": "0.0.1",
 	"description": "fetch-like wrapper for GM_xmlhttpRequest.",
-	"main": "gmfetch.js",
-	"broser": "gmfetch.min.js",
+	"main": "gmxhr-fetch.js",
+	"broser": "gmxhr-fetch.min.js",
 	"keywords": [],
 	"scripts": {
-		"min": "minify gmfetch.js -o gmfetch.min.js",
+		"min": "minify gmxhr-fetch.js -o gmxhr-fetch.min.js",
 		"prepare": "npm run min"
 	},
 	"devDependencies": {
