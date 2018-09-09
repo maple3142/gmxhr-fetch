@@ -69,14 +69,17 @@
 	}
 	const fetch = (input, init = {}) =>
 		new Promise(res => {
-			// defaults
-			Object.assign(init, {
-				method: 'GET',
-				headers: {}
-			})
-			// overrides
-			init.url = input
-			init.responseType = 'arrayBuffer'
+			init = Object.assign(
+				{
+					method: 'GET',
+					headers: {}
+				},
+				init,
+				{
+					url: input,
+					responseType: 'arrayBuffer'
+				}
+			)
 			GM.xmlHttpRequest(
 				Object.assign({}, init, {
 					onload: xhr => res(new Response(xhr, init)),
