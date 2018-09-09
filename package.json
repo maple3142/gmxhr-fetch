@@ -1,6 +1,6 @@
 {
-	"name": "gmfetch",
-	"version": "1.0.0",
+	"name": "gmxhr-fetch",
+	"version": "0.0.1",
 	"description": "fetch-like wrapper for GM_xmlhttpRequest.",
 	"main": "gmfetch.js",
 	"broser": "gmfetch.min.js",
