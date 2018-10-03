@@ -11,23 +11,32 @@
 		constructor(xhr, init) {
 			this.xhr = xhr
 			this.init = init
+			this._bodyUsed = false
 		}
-		async arrayBuffer() {
-			return this.xhr.response
+		get _arrayBuffer() {
+			const te = new TextEncoder()
+			return te.encode(this.xhr.response)
 		}
-		async blob() {
-			return new Blob([this.xhr.response])
+		arrayBuffer() {
+			this._bodyUsed = true
+			return Promise.resolve(this._arrayBuffer)
 		}
-		async formData() {
+		blob() {
+			this._bodyUsed = true
+			return Promise.resolve(new Blob([this._arrayBuffer]))
+		}
+		formData() {
+			this._bodyUsed = true
 			// I don't know what does this method do...
-			throw new Error('No implemented!')
+			throw new Error('Not implemented!')
 		}
-		async json() {
-			return JSON.parse(await this.text())
+		json() {
+			this._bodyUsed = true
+			return Promise.resolve(JSON.parse(this.xhr.response))
 		}
-		async text() {
-			const td = new TextDecoder()
-			return td.decode(this.xhr.response)
+		text() {
+			this._bodyUsed = true
+			return Promise.resolve(this.xhr.response)
 		}
 		clone() {
 			return Object.assign({}, this)
@@ -56,7 +65,7 @@
 			return this.init.url
 		}
 		get bodyUsed() {
-			return this.xhr.method.toUpperCase() !== 'GET'
+			return this._bodyUsed
 		}
 		get redirected() {
 			// ???
@@ -77,7 +86,7 @@
 				init,
 				{
 					url: input,
-					responseType: 'arrayBuffer'
+					responseType: 'text'
 				}
 			)
 			GM.xmlHttpRequest(
