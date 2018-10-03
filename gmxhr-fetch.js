@@ -13,17 +13,13 @@
 			this.init = init
 			this._bodyUsed = false
 		}
-		get _arrayBuffer() {
-			const te = new TextEncoder()
-			return te.encode(this.xhr.response)
-		}
 		arrayBuffer() {
 			this._bodyUsed = true
-			return Promise.resolve(this._arrayBuffer)
+			return Promise.resolve(this.xhr.response)
 		}
 		blob() {
 			this._bodyUsed = true
-			return Promise.resolve(new Blob([this._arrayBuffer]))
+			return Promise.resolve(new Blob([this.xhr.response]))
 		}
 		formData() {
 			this._bodyUsed = true
@@ -32,11 +28,14 @@
 		}
 		json() {
 			this._bodyUsed = true
-			return Promise.resolve(JSON.parse(this.xhr.response))
+			return Promise.resolve(JSON.parse(this._text))
+		}
+		get _text() {
+			return (this._ct = this._ct || new TextDecoder.decode(this.xhr.response))
 		}
 		text() {
 			this._bodyUsed = true
-			return Promise.resolve(this.xhr.response)
+			return Promise.resolve(this._text)
 		}
 		clone() {
 			return Object.assign({}, this)
@@ -86,7 +85,7 @@
 				init,
 				{
 					url: input,
-					responseType: 'text'
+					responseType: 'arraybuffer'
 				}
 			)
 			GM.xmlHttpRequest(
