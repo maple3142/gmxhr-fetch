@@ -7,76 +7,22 @@
 	if (typeof GM_xmlhttpRequest === 'function' && !GM.xmlHttpRequest) {
 		GM.xmlHttpRequest = GM_xmlhttpRequest
 	}
-	class Response {
-		constructor(xhr, init) {
-			this.xhr = xhr
-			this.init = init
-			this._bodyUsed = false
+	const fromEntries = e => e.reduce((acc, [k, v]) => ((acc[k] = v), acc), {})
+	const parseHeader = h =>
+		fromEntries(
+			h
+				.split('\n')
+				.filter(Boolean)
+				.map(l => l.split(':').map(tok => tok.trim()))
+		)
+	const fetch = (input, init = {}) => {
+		if (input instanceof Request) {
+			return fetch(input.url, Object.assign({}, input, init))
 		}
-		arrayBuffer() {
-			this._bodyUsed = true
-			return Promise.resolve(this.xhr.response)
-		}
-		blob() {
-			this._bodyUsed = true
-			return Promise.resolve(new Blob([this.xhr.response]))
-		}
-		formData() {
-			this._bodyUsed = true
-			// I don't know what does this method do...
-			throw new Error('Not implemented!')
-		}
-		json() {
-			this._bodyUsed = true
-			return Promise.resolve(JSON.parse(this._text))
-		}
-		get _text() {
-			return (this._ct = this._ct || new TextDecoder.decode(this.xhr.response))
-		}
-		text() {
-			this._bodyUsed = true
-			return Promise.resolve(this._text)
-		}
-		clone() {
-			return Object.assign({}, this)
-		}
-		redirect() {
-			/// ???
-			return this.clone()
-		}
-		get ok() {
-			return this.xhr.status >= 200 && this.xhr.status < 300
-		}
-		get headers() {
-			return new Headers(this.xhr.headers)
-		}
-		get status() {
-			return this.xhr.status
-		}
-		get statusText() {
-			return this.xhr.statusText
-		}
-		get type() {
-			// gmxhr is always cors
-			return 'cors'
-		}
-		get url() {
-			return this.init.url
-		}
-		get bodyUsed() {
-			return this._bodyUsed
-		}
-		get redirected() {
-			// ???
-			return true
-		}
-		get useFinalURL() {
-			// ???
-			return true
-		}
-	}
-	const fetch = (input, init = {}) =>
-		new Promise(res => {
+		return new Promise(res => {
+			if (init.headers instanceof Headers) {
+				init.headers = fromEntries(Array.from(init.headers.entries()))
+			}
 			init = Object.assign(
 				{
 					method: 'GET',
@@ -85,15 +31,23 @@
 				init,
 				{
 					url: input,
-					responseType: 'arraybuffer'
+					responseType: 'blob'
 				}
 			)
 			GM.xmlHttpRequest(
 				Object.assign({}, init, {
-					onload: xhr => res(new Response(xhr, init)),
-					onerror: xhr => res(new Response(xhr, init))
+					onload: xhr => {
+						xhr.headers = parseHeader(xhr.responseHeaders)
+						res(new Response(xhr.response, Object.assign({}, init, xhr)))
+					},
+					onerror: xhr => {
+						console.log('err', xhr)
+						res(new Response(xhr.response, Object.assign({}, init, xhr)))
+					}
 				})
 			)
 		})
+	}
+
 	return fetch
 })
