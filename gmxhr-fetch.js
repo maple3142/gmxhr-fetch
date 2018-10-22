@@ -23,6 +23,7 @@
 			if (init.headers instanceof Headers) {
 				init.headers = fromEntries(Array.from(init.headers.entries()))
 			}
+			init.data = init.body
 			init = Object.assign(
 				{
 					method: 'GET',
