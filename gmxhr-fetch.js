@@ -7,7 +7,7 @@
 	if (typeof GM_xmlhttpRequest === 'function' && !GM.xmlHttpRequest) {
 		GM.xmlHttpRequest = GM_xmlhttpRequest
 	}
-	const fromEntries = e => e.reduce((acc, [k, v]) => ((acc[k] = v), acc), {})
+	const fromEntries = e => e.reduce((acc, [k, ...v]) => ((acc[k] = v.join(":")), acc), {})
 	const parseHeader = h =>
 		fromEntries(
 			h
