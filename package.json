@@ -3,7 +3,7 @@
 	"version": "0.1.1",
 	"description": "fetch-like wrapper for GM_xmlhttpRequest.",
 	"main": "gmxhr-fetch.js",
-	"broser": "gmxhr-fetch.min.js",
+	"browser": "gmxhr-fetch.min.js",
 	"keywords": [],
 	"scripts": {
 		"min": "minify gmxhr-fetch.js -o gmxhr-fetch.min.js",
