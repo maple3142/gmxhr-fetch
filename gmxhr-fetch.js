@@ -7,14 +7,11 @@
 	if (typeof GM_xmlhttpRequest === 'function' && !GM.xmlHttpRequest) {
 		GM.xmlHttpRequest = GM_xmlhttpRequest
 	}
-	const fromEntries = e => e.reduce((acc, [k, v]) => ((acc[k] = v), acc), {})
-	const parseHeader = h =>
-		fromEntries(
-			h
-				.split('\n')
-				.filter(Boolean)
-				.map(l => l.split(':').map(tok => tok.trim()))
-		)
+	const splitHeaderLine = l => {
+		const i = l.indexOf(':')
+		return [l.slice(0, i), l.slice(i + 1).trimLeft()]
+	}
+	const parseHeader = h => Object.fromEntries(h.split('\r\n').filter(Boolean).map(splitHeaderLine))
 	const fetch = (input, init = {}) => {
 		if (input instanceof Request) {
 			return fetch(input.url, Object.assign({}, input, init))
